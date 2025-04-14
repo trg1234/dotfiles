@@ -1,3 +1,6 @@
+-- lua/config/lazy.lua
+
+-- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -14,27 +17,39 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Setup lazy.nvim
 require("lazy").setup({
+  -- Configure plugin specifications
   spec = {
-    -- add LazyVim and import its plugins
+    -- add LazyVim and import its plugins (includes nvim-cmp by default, ensure it's disabled in disabled.lua)
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
-    -- import/override with your plugins
+
+    -- == Import the desired extras ==
+    { import = "lazyvim.plugins.extras.lang.rust" }, -- For rustaceanvim and rust setup
+    { import = "lazyvim.plugins.extras.coding.blink" }, -- For blink.cmp completion
+
+    -- == Ensure other completion extras are NOT imported ==
+    -- { import = "lazyvim.plugins.extras.coding.nvim-cmp" }, -- Make sure this is commented out or absent
+
+    -- import/override with your custom plugins from lua/plugins/
     { import = "plugins" },
   },
+
+  -- Configure lazy.nvim options
   defaults = {
-    -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
-    -- If you know what you're doing, you can set this to `true` to have all your custom plugins lazy-loaded by default.
     lazy = false,
-    -- It's recommended to leave version=false for now, since a lot the plugin that support versioning,
-    -- have outdated releases, which may break your Neovim install.
     version = false, -- always use the latest git commit
-    -- version = "*", -- try installing the latest stable version for plugins that support semver
   },
-  install = { colorscheme = { "tokyonight", "habamax" } },
+
+  install = {
+    colorscheme = { "tokyonight", "habamax" },
+  },
+
   checker = {
     enabled = true, -- check for plugin updates periodically
     notify = false, -- notify on update
-  }, -- automatically check for plugin updates
+  },
+
   performance = {
     rtp = {
       -- disable some rtp plugins
